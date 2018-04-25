@@ -13,11 +13,11 @@ using namespace std;
 //---------------------------------------------------------------
 // * Function Prototypes
 //---------------------------------------------------------------
-bool checkDirected(const int** matrix, const int size);
-bool checkGraph(const int** matrix, const int size);
-bool breadthFirstSearch(const int** matrix, const int size, const int start);
-bool depthFirstSearch(const int** matrix, const int size, const int start);
-void getNeighbors(const int** matrix, const int size, const int node, vector<int> &neighbors);
+bool checkDirected(int** matrix, int size);
+bool checkGraph(int** matrix, int size);
+bool breadthFirstSearch(int** matrix, int size, int start);
+bool depthFirstSearch(int** matrix, int size, int start);
+void getNeighbors(int** matrix, int size, int node, vector<int> &neighbors);
 
 //---------------------------------------------------------------
 // * Main Process
@@ -44,6 +44,16 @@ int main() {
 			cin >> adjacencyMatrix[i][j];
 		}
 	}
+	cout << "Matrix input complete!\n";
+	cout << "Now computing connectivity...\n";
+
+	// Check if the graph is connected
+	if (checkGraph(adjacencyMatrix, size)) {
+		cout << "The graph is connected!\n";
+	} else {
+		cout << "The graph is not connected...\n";
+	}
+
 
 	// Prepare for program termination
 	for (int i = 0; i < size; i++) {
@@ -56,7 +66,7 @@ int main() {
 //---------------------------------------------------------------
 // * Check the Graph and Return if it is Directed
 //---------------------------------------------------------------
-bool checkDirected(const int** matrix, const int size) {
+bool checkDirected(int** matrix, int size) {
 	for (int i = 0; i < size; i++) {
 		for (int j = 0; j < size; j++) {
 			if (matrix[i][j] != matrix[j][i]) {
@@ -72,19 +82,23 @@ bool checkDirected(const int** matrix, const int size) {
 //---------------------------------------------------------------
 // * Check the Graph and Return if it is Connected
 //---------------------------------------------------------------
-bool checkGraph(const int** matrix, const int size) {
+bool checkGraph(int** matrix, int size) {
 	if (checkDirected(matrix, size)) {
-
+		for (int i = 0; i < size; i++) {
+			if (!depthFirstSearch(matrix, size, i)) {
+				return false;
+			}
+			return true;
+		}
 	} else {
-
+		return breadthFirstSearch(matrix, size, 0);
 	}
-	return false;
 }
 
 //---------------------------------------------------------------
 // * Run Breath First Search
 //---------------------------------------------------------------
-bool breadthFirstSearch(const int** matrix, const int size, const int start) {
+bool breadthFirstSearch(int** matrix, int size, int start) {
 	queue<int> Q;
 	vector<int> visited;
 	Q.push(start);
@@ -92,11 +106,12 @@ bool breadthFirstSearch(const int** matrix, const int size, const int start) {
 	while (!Q.empty()) {
 		vector<int> neighbors;
 		int v = Q.front();
+		cout << "Checking node " << v << endl;
 		Q.pop();
 		getNeighbors(matrix, size, v, neighbors);
 		for (int w : neighbors) {
 			vector<int>::iterator it = find(visited.begin(), visited.end(), w);
-			if (it != visited.end()) {
+			if (it == visited.end()) {
 				Q.push(w);
 				visited.push_back(w);
 			}
@@ -108,7 +123,7 @@ bool breadthFirstSearch(const int** matrix, const int size, const int start) {
 //---------------------------------------------------------------
 // * Run Depth First Search
 //---------------------------------------------------------------
-bool depthFirstSearch(const int** matrix, const int size, const int start) {
+bool depthFirstSearch(int** matrix, int size, int start) {
 	stack<int> S;
 	vector<int> visited;
 	S.push(start);
@@ -116,11 +131,12 @@ bool depthFirstSearch(const int** matrix, const int size, const int start) {
 	while (!S.empty()) {
 		vector<int> neighbors;
 		int v = S.top();
+		cout << "Checking node " << v << endl;
 		S.pop();
 		getNeighbors(matrix, size, v, neighbors);
 		for (int w : neighbors) {
 			vector<int>::iterator it = find(visited.begin(), visited.end(), w);
-			if (it != visited.end()) {
+			if (it == visited.end()) {
 				S.push(w);
 				visited.push_back(w);
 			}
@@ -132,7 +148,7 @@ bool depthFirstSearch(const int** matrix, const int size, const int start) {
 //---------------------------------------------------------------
 // * Run Depth First Search
 //---------------------------------------------------------------
-void getNeighbors(const int** matrix, const int size, const int node, vector<int> &neighbors) {
+void getNeighbors(int** matrix, int size, int node, vector<int> &neighbors) {
 	neighbors.clear();
 	for (int i = 0; i < size; i++) {
 		if (matrix[node][i] > 0) {
