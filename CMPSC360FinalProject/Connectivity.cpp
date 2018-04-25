@@ -72,4 +72,5 @@ bool checkGraph(const int** matrix, const int size) {
 	} else {
 
 	}
+	return false;
 }
