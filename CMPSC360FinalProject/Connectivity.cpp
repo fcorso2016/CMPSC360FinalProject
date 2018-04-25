@@ -5,6 +5,9 @@
 // tells you if the graphic is connected or not
 //===============================================================
 #include <iostream>
+#include <algorithm>
+#include <queue>
+#include <stack>
 using namespace std;
 
 //---------------------------------------------------------------
@@ -12,6 +15,9 @@ using namespace std;
 //---------------------------------------------------------------
 bool checkDirected(const int** matrix, const int size);
 bool checkGraph(const int** matrix, const int size);
+bool breadthFirstSearch(const int** matrix, const int size, const int start);
+bool depthFirstSearch(const int** matrix, const int size, const int start);
+void getNeighbors(const int** matrix, const int size, const int node, vector<int> &neighbors);
 
 //---------------------------------------------------------------
 // * Main Process
@@ -73,4 +79,64 @@ bool checkGraph(const int** matrix, const int size) {
 
 	}
 	return false;
+}
+
+//---------------------------------------------------------------
+// * Run Breath First Search
+//---------------------------------------------------------------
+bool breadthFirstSearch(const int** matrix, const int size, const int start) {
+	queue<int> Q;
+	vector<int> visited;
+	Q.push(start);
+	visited.push_back(start);
+	while (!Q.empty()) {
+		vector<int> neighbors;
+		int v = Q.front();
+		Q.pop();
+		getNeighbors(matrix, size, v, neighbors);
+		for (int w : neighbors) {
+			vector<int>::iterator it = find(visited.begin(), visited.end(), w);
+			if (it != visited.end()) {
+				Q.push(w);
+				visited.push_back(w);
+			}
+		}
+	}
+	return visited.size() == size;
+}
+
+//---------------------------------------------------------------
+// * Run Depth First Search
+//---------------------------------------------------------------
+bool depthFirstSearch(const int** matrix, const int size, const int start) {
+	stack<int> S;
+	vector<int> visited;
+	S.push(start);
+	visited.push_back(start);
+	while (!S.empty()) {
+		vector<int> neighbors;
+		int v = S.top();
+		S.pop();
+		getNeighbors(matrix, size, v, neighbors);
+		for (int w : neighbors) {
+			vector<int>::iterator it = find(visited.begin(), visited.end(), w);
+			if (it != visited.end()) {
+				S.push(w);
+				visited.push_back(w);
+			}
+		}
+	}
+	return visited.size() == size;
+}
+
+//---------------------------------------------------------------
+// * Run Depth First Search
+//---------------------------------------------------------------
+void getNeighbors(const int** matrix, const int size, const int node, vector<int> &neighbors) {
+	neighbors.clear();
+	for (int i = 0; i < size; i++) {
+		if (matrix[node][i] > 0) {
+			neighbors.push_back(i);
+		}
+	}
 }
