@@ -86,11 +86,13 @@ bool checkGraph(int** matrix, int size) {
 	if (checkDirected(matrix, size)) {
 		for (int i = 0; i < size; i++) {
 			if (!depthFirstSearch(matrix, size, i)) {
+				cout << "Start node: " << i << endl;
 				return false;
 			}
-			return true;
 		}
+		return true;
 	} else {
+		cout << "Start node: " << 0 << endl;
 		return breadthFirstSearch(matrix, size, 0);
 	}
 }
