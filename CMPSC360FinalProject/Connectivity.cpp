@@ -84,14 +84,16 @@ bool checkDirected(int** matrix, int size) {
 //---------------------------------------------------------------
 bool checkGraph(int** matrix, int size) {
 	if (checkDirected(matrix, size)) {
+		cout << "Running Depth-First Search on the directed graph." << endl;
 		for (int i = 0; i < size; i++) {
+			cout << "Start node: " << i << endl;
 			if (!depthFirstSearch(matrix, size, i)) {
-				cout << "Start node: " << i << endl;
 				return false;
 			}
 		}
 		return true;
 	} else {
+		cout << "Running Breadth-First Search on the undirected graph." << endl;
 		cout << "Start node: " << 0 << endl;
 		return breadthFirstSearch(matrix, size, 0);
 	}
